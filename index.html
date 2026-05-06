@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GymLock – Earn Your Screen Time</title>
+  <meta name="description" content="Lock distracting apps and earn back access by doing push-ups or steps. Stay fit, stay focused." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #E85D04;
+      --amber:  #F48C06;
+      --bg:     #0f0f0f;
+      --surface: #1a1a1a;
+      --surface2: #242424;
+      --text:   #f0f0f0;
+      --muted:  #888;
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 40px;
+      background: rgba(15,15,15,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .nav-logo {
+      font-size: 1.3rem; font-weight: 800; letter-spacing: -.5px;
+      text-decoration: none;
+    }
+    .nav-logo span:first-child { color: var(--orange); }
+    .nav-logo span:last-child  { color: var(--text); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 999px;
+      font-weight: 600; font-size: .9rem;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: transform .15s, opacity .15s;
+    }
+    .btn:hover { transform: translateY(-1px); opacity: .9; }
+    .btn-primary { background: var(--orange); color: #fff; }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1.5px solid #444;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 92vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 80px 24px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(232,93,4,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(232,93,4,.15);
+      color: var(--amber);
+      border: 1px solid rgba(232,93,4,.3);
+      border-radius: 999px;
+      padding: 5px 16px;
+      font-size: .8rem; font-weight: 600;
+      letter-spacing: .5px; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      max-width: 780px;
+    }
+    .hero h1 .accent { color: var(--orange); }
+    .hero p {
+      margin-top: 24px;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      max-width: 520px;
+    }
+    .hero-cta {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .hero-mockup {
+      margin-top: 64px;
+      width: min(340px, 90vw);
+      aspect-ratio: 9/18;
+      background: var(--surface);
+      border-radius: 36px;
+      border: 2px solid #2e2e2e;
+      box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 6px #1a1a1a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 12px;
+      position: relative; overflow: hidden;
+    }
+    .hero-mockup::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 28px;
+      background: #0f0f0f;
+      border-radius: 0 0 18px 18px;
+    }
+    .mockup-time {
+      font-size: 3rem; font-weight: 900;
+      color: var(--orange);
+    }
+    .mockup-label {
+      font-size: .75rem; color: var(--muted); letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .mockup-locked {
+      margin-top: 8px;
+      background: rgba(232,93,4,.12);
+      border: 1px solid rgba(232,93,4,.25);
+      border-radius: 999px;
+      padding: 5px 16px;
+      font-size: .78rem; color: var(--amber);
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 96px 24px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .section-label {
+      font-size: .75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -1px;
+      line-height: 1.15;
+    }
+    .section-sub {
+      margin-top: 12px; color: var(--muted);
+      font-size: 1.05rem; max-width: 500px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--surface); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .step {
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 28px;
+      border: 1px solid #2e2e2e;
+      position: relative;
+    }
+    .step-num {
+      font-size: 2.5rem; font-weight: 900;
+      color: rgba(232,93,4,.25);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .step p  { font-size: .875rem; color: var(--muted); }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 32px;
+      border: 1px solid #2a2a2a;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(232,93,4,.4);
+      transform: translateY(-3px);
+    }
+    .feature-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p  { font-size: .9rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── EARN ── */
+    .earn { background: var(--surface); }
+    .earn-cards {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      margin-top: 48px;
+    }
+    .earn-card {
+      flex: 1; min-width: 240px;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+    }
+    .earn-card.pushups { background: linear-gradient(135deg, rgba(232,93,4,.2), rgba(232,93,4,.05)); border: 1px solid rgba(232,93,4,.3); }
+    .earn-card.steps   { background: linear-gradient(135deg, rgba(244,140,6,.2), rgba(244,140,6,.05)); border: 1px solid rgba(244,140,6,.3); }
+    .earn-card .earn-icon { font-size: 2.8rem; }
+    .earn-card h3 { font-size: 1.3rem; font-weight: 800; }
+    .earn-card .rate {
+      font-size: 1rem; font-weight: 700;
+      color: var(--orange);
+      background: rgba(232,93,4,.12);
+      padding: 4px 14px; border-radius: 999px;
+    }
+    .earn-card p { font-size: .9rem; color: var(--muted); }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      border-radius: 24px;
+      padding: 60px 40px;
+      text-align: center;
+      margin: 0 24px 96px;
+    }
+    .cta-banner h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; color: #fff; }
+    .cta-banner p  { color: rgba(255,255,255,.8); margin-top: 12px; font-size: 1.05rem; }
+    .cta-banner .btn-white {
+      margin-top: 32px;
+      background: #fff; color: var(--orange); font-weight: 700;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid #1e1e1e;
+      padding: 40px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+      font-size: .85rem; color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 24px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 60px 20px; }
+      .cta-banner { margin: 0 16px 64px; padding: 40px 24px; }
+      footer { padding: 32px 20px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span>Gym</span><span>Lock</span>
+  </a>
+  <a class="btn btn-primary" href="#download">Get the App</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏋️ Fitness-powered screen time</div>
+  <h1>Earn your <span class="accent">screen time</span> the hard way.</h1>
+  <p>GymLock locks your most distracting apps and only unlocks them when you exercise. Push-ups, steps — you decide.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#download">Download Free</a>
+    <a class="btn btn-outline" href="#how-it-works">See how it works</a>
+  </div>
+  <div class="hero-mockup">
+    <div class="mockup-time">28m 14s</div>
+    <div class="mockup-label">Time Bank</div>
+    <div class="mockup-locked">4 apps locked</div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how-it-works">
+  <div class="container">
+    <div class="section-label">How it works</div>
+    <div class="section-title">Four steps to a<br>healthier habit.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Pick your distractions</h3>
+        <p>Choose any app to lock — Instagram, TikTok, YouTube. Whatever steals your time.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Try to open it</h3>
+        <p>GymLock detects the launch instantly and blocks it with a full-screen lock.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Earn unlock time</h3>
+        <p>Do push-ups in front of your camera or go for a walk. Each rep and step earns minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Time ticks down</h3>
+        <p>Your earned time drains while the app is open. Run out — locked again. Stay active.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EARN TIME -->
+<section class="earn" id="earn">
+  <div class="container">
+    <div class="section-label">Earn time</div>
+    <div class="section-title">Two ways to unlock.</div>
+    <p class="section-sub">Both work in the background. Both count even when your screen is off.</p>
+    <div class="earn-cards">
+      <div class="earn-card pushups">
+        <div class="earn-icon">💪</div>
+        <h3>Push-ups</h3>
+        <div class="rate">1 rep = 1 minute</div>
+        <p>AI-powered detection using your front camera. Real-time skeleton overlay shows your form. Drop and go — no buttons needed.</p>
+      </div>
+      <div class="earn-card steps">
+        <div class="earn-icon">🚶</div>
+        <h3>Steps</h3>
+        <div class="rate">100 steps = 1 minute</div>
+        <p>Counts steps with your accelerometer. Works in your pocket, screen off. Walk to the kitchen — every step counts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <div class="section-title">Everything you need<br>to build better habits.</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Lock any app</h3>
+        <p>Browse your installed apps and flip a toggle. GymLock handles the rest — no root required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎁</div>
+        <h3>30 min daily bonus</h3>
+        <p>Every day starts with 30 free minutes, so you're never completely locked out from the beginning.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>On-device AI</h3>
+        <p>Push-up detection runs fully offline using Google ML Kit. No video ever leaves your phone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔋</div>
+        <h3>Battery-friendly</h3>
+        <p>Background services are optimized to minimize battery drain. Works across Xiaomi, Samsung, OnePlus, Huawei, Oppo, Vivo, and Asus.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>100% private</h3>
+        <p>No accounts, no servers, no analytics. All data lives on your device. We see nothing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3>No ads, no fees</h3>
+        <p>Free forever. No subscriptions, no paywalls, no upsells. Just the app that keeps you honest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD CTA -->
+<div class="cta-banner" id="download">
+  <h2>Stop scrolling. Start moving.</h2>
+  <p>Available on Indus App Store for Android.</p>
+  <a class="btn btn-white btn" href="#">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 3v8m0 0-3-3m3 3 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    Indus App Store
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <strong style="color: var(--text)">GymLock</strong> &nbsp;·&nbsp; © 2026 TrueHealth
+  </div>
+  <div class="footer-links">
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="mailto:truehealth786@gmail.com">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
