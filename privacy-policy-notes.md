@@ -2,7 +2,7 @@
 
 _Last updated: 2026-07-11_
 
-GymLock ("the app") is developed by [YOUR NAME / COMPANY]. This policy explains what the app accesses and, more importantly, what it does **not** do with it.
+GymLock ("the app") is developed by Nihal Rasekar. This policy explains what the app accesses and, more importantly, what it does **not** do with it.
 
 ## Summary
 
@@ -12,7 +12,7 @@ GymLock does not collect, store, transmit, or share any personal data with the d
 
 | Permission | Purpose |
 |---|---|
-| Camera | Used only while you are on the Exercise screen, to run on-device pose detection (ML Kit) that counts your push-ups. No photo or video is ever saved, recorded, or sent anywhere. |
+| Camera | Used only while you are on the Exercise screen, to run on-device pose detection  that counts your push-ups. No photo or video is ever saved, recorded, or sent anywhere. |
 | Activity Recognition | Used to count your steps so they can be converted into earned screen time. |
 | Accessibility Service | Used to detect which app is currently in the foreground, so GymLock can show the exercise/lock screen when you open an app you've chosen to lock. GymLock does not read, log, or transmit the content of any app, only the package name of the app in the foreground. |
 | Post Notifications | Used to show the persistent "time remaining" / step-count notification while a lock/timer session is active. |
@@ -34,4 +34,4 @@ If this policy changes, the updated version will be posted at this same URL with
 
 ## Contact
 
-[YOUR CONTACT EMAIL]
+truetech988@gmail.com
